@@ -18,7 +18,7 @@ This project is a Node.js-based multi-service application that uses Docker and P
     - [Blog Service](#blog-service)
     - [Comment Service](#comment-service)
 6. [Database Schema](#database-schema)
-7. [License](#license)
+7. [ Multi-Service Application](#Multi-server-Application)
 
 ---
 
@@ -225,5 +225,60 @@ Ensure each service has its own `.env` file with the following keys:
         author_id INT REFERENCES users(id)
     );
     ```
+
+    # Multi-Service Application
+
+This repository contains a multi-service application deployed on AWS EC2, including the User Service, Post Service, and Comment Service. Below are the details of each service and how to access them.
+
+---
+
+## **Services Deployed on AWS EC2**
+
+### **1. User Service**
+- **Description**: Handles user-related operations (e.g., authentication, user profiles, etc.).
+- **URL**: [User Service](http://ec2-51-20-64-84.eu-north-1.compute.amazonaws.com:443)
+- **Port**: `443`
+
+### **2. Post Service**
+- **Description**: Manages posts, including creating, reading, updating, and deleting posts.
+- **URL**: [Post Service](http://ec2-51-20-64-84.eu-north-1.compute.amazonaws.com:80)
+- **Port**: `80`
+
+### **3. Comment Service**
+- **Description**: Handles comments on posts, including adding and retrieving comments.
+- **URL**: [Comment Service](http://ec2-51-20-64-84.eu-north-1.compute.amazonaws.com:22)
+- **Port**: `22`
+
+---
+
+## **AWS EC2 Section**
+
+The application is deployed on an AWS EC2 instance. Below are the key details:
+
+- **Instance Type**: t2.micro
+- **Region**: eu-north-1
+- **Public DNS**: [ec2-51-20-64-84.eu-north-1.compute.amazonaws.com](http://ec2-51-20-64-84.eu-north-1.compute.amazonaws.com)
+- **Security Groups**:
+  - Port 80: Open for Post Service
+  - Port 443: Open for User Service
+  - Port 22: Open for Comment Service (Typically used for SSH; consider remapping)
+
+---
+
+## **How to Test the Services**
+
+### **1. Using Postman**
+- **User Service Health Check**: 
+  - URL: `http://ec2-51-20-64-84.eu-north-1.compute.amazonaws.com:443/users/health`
+  - Method: `GET`
+- **Post Service Health Check**:
+  - URL: `http://ec2-51-20-64-84.eu-north-1.compute.amazonaws.com:80/posts/health`
+  - Method: `GET`
+- **Comment Service Health Check**:
+  - URL: `http://ec2-51-20-64-84.eu-north-1.compute.amazonaws.com:22/comments/health`
+  - Method: `GET`
+
+---
+
 
 ---
