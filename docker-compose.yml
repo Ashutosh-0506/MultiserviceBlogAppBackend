@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: multi-service-app-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: multiapp
+    volumes:
+      - db_data:/var/lib/postgresql/data        # Persistent data storage
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql # Automatically create tables
+    restart: always
+    networks:
+      - multi-app-network                      # Connect to the shared network
+
+  user-service:
+    build: ./user-service
+    container_name: multi-service-app-user-service
+    ports:
+      - "4000:4000"
+    environment:
+      - DB_USER=postgres
+      - DB_PASSWORD=admin
+      - DB_HOST=postgres
+      - DB_NAME=multiapp
+      - JWT_SECRET=supersecret
+      - DB_PORT=5432
+    depends_on:
+      - postgres
+    networks:
+      - multi-app-network                      # Connect to the shared network
+
+  blog-service:
+    build: ./blog-service
+    container_name: multi-service-app-blog-service
+    ports:
+      - "4001:4001"
+    environment:
+      - DB_USER=postgres
+      - DB_PASSWORD=admin
+      - DB_HOST=postgres
+      - DB_NAME=multiapp
+      - DB_PORT=5432
+    depends_on:
+      - postgres
+    networks:
+      - multi-app-network                      # Connect to the shared network
+
+  comment-service:
+    build: ./comment-service
+    container_name: multi-service-app-comment-service
+    ports:
+      - "4002:4002"
+    environment:
+      - DB_USER=postgres
+      - DB_PASSWORD=admin
+      - DB_HOST=postgres
+      - DB_NAME=multiapp
+      - DB_PORT=5432
+    depends_on:
+      - postgres
+    networks:
+      - multi-app-network                      # Connect to the shared network
+
+volumes:
+  db_data:                                     # Volume for PostgreSQL data persistence
+
+networks:
+  multi-app-network:
+    driver: bridge                             # Create a shared bridge network
